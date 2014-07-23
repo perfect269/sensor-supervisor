@@ -1,4 +1,4 @@
 sensor-supervisor
 =================
 
-An android application that logs sensor data. Fairly early version.
+An android application that logs sensor data and saves it into a database/file.
