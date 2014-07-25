@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sensor Supervisor</string>
+    <string name="title_section1">Basic Sensors</string>
+    <string name="title_section2">GPS</string>
+    <string name="title_section3">Network</string>
+    <string name="title_section4">Media</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="data_spinner_text">Where to save the data?</string>
+    <string name="data_switch_text">Show sensor data</string>
+    <string name="sensor_list_rate">Rate: </string>
+    <string name="unknown_value">N/A</string>
+    <string name="camera_switch_text">Show camera</string>
+    
+    <string-array name="data_array">
+        <item>Database</item>
+        <item>File</item>
+    </string-array>
+</resources>
