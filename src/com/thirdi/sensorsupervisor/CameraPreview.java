@@ -13,7 +13,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera mCamera;
     private String TAG = "CameraExample";
     protected static boolean SHOW_CAMERA = true;
-
+    private SurfaceView view = new SurfaceView(getContext());
+    
     public CameraPreview(Context context, Camera camera) {
         super(context);
         mCamera = camera;
@@ -26,10 +27,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         // Surface has been created, now tell the camera where to draw the preview.
         try {
-            mCamera.setPreviewDisplay(holder);
-            if (SHOW_CAMERA) {
-            	mCamera.startPreview();
-            }
+        	if (SHOW_CAMERA) {
+        		mCamera.setPreviewDisplay(holder);
+        	} else {
+        		mCamera.setPreviewDisplay(view.getHolder());
+        	}
+            mCamera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
@@ -60,7 +63,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // start preview with new settings
         try {
-            mCamera.setPreviewDisplay(mHolder);
+        	if (SHOW_CAMERA) {
+        		mCamera.setPreviewDisplay(holder);
+        	} else {
+        		mCamera.setPreviewDisplay(view.getHolder());
+        	}
             mCamera.startPreview();
 
         } catch (Exception e){
