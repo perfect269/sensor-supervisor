@@ -18,6 +18,14 @@ import android.view.ViewGroup;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    /**
+     * Main activity of our app. It is being invoked when the app starts.
+     * 
+     * mTitle : Holds the value of title part.
+     * mSensorFragment, mGPSFragment, mNetworkFragment, mMediaFragment, mSettingsFragment : Fragments 
+     *      that will be replaced with the container when needed.
+     */
 	
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
@@ -29,14 +37,6 @@ public class MainActivity extends Activity
     private FragmentTransaction mFragmentTransaction;
     private SettingsFragment mSettingsFragment;
     
-    /**
-     * onCreate that is being called when application first starts.
-     * 
-     * mTitle : Holds the value of title part.
-     * mSensorFragment, mGPSFragment, mNetworkFragment, mMediaFragment, mSettingsFragment : Fragments 
-     * 		that will be replaced with the container when needed.
-     */
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,7 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+        //Initialize member variables when app is first started.
         mFragmentManager = getFragmentManager();
         mSensorFragment = new SensorFragment();
         mGPSFragment = new GPSFragment();
@@ -69,6 +70,7 @@ public class MainActivity extends Activity
 
     public void onSectionAttached(int number) {
     	// An element from NavigationDrawer is selected, replace the old fragment with the new one.
+        // Basically, start a fragment transaction, define it, then commit it.
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);

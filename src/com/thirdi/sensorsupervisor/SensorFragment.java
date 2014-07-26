@@ -59,6 +59,9 @@ public class SensorFragment extends Fragment {
 	 */
 	
 	private static class Holder {
+		// A holder class. Holds items of the row it belongs to.
+		// Stored as the tag of that same view. Provides easy access.
+		// If used with a listview, also makes UI more responsive.
 		private ProgressBar progressbar_x, progressbar_y, progressbar_z;
 		private TextView textview_x, textview_y, textview_z, textview_accuracy,
 			textview_rate;
@@ -76,6 +79,7 @@ public class SensorFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//Initialize member variables
 		mInflater = (LayoutInflater) getActivity()
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mSensorManager = (SensorManager) getActivity()
@@ -101,9 +105,13 @@ public class SensorFragment extends Fragment {
 	public void onStart() {
 		super.onStart();
 		
+		//Retrieve the list of available sensors
 		List<Sensor> sensorsList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+		//Initialize our container(a linear layout which we will add sensors row-by-row)
 		mSensorContainer = (LinearLayout) getView().findViewById(R.id.sensor_container);
 		
+		//Check whether or not we have populated this list before
 		if (mSensorContainer.getChildCount() == 0) {
 						
 			for (Sensor sensor : sensorsList) {
@@ -127,6 +135,7 @@ public class SensorFragment extends Fragment {
 						currentRow = mInflater.inflate(R.layout.sensor_list_item, null);
 						holder = new Holder();
 						
+						//Initialize elements of this row's holder(Which includes our SensorEventListener as well.)
 						holder.progressbar_x = (ProgressBar) currentRow.findViewById(R.id.progressbar_x);
 						holder.progressbar_y = (ProgressBar) currentRow.findViewById(R.id.progressbar_y);
 						holder.progressbar_z = (ProgressBar) currentRow.findViewById(R.id.progressbar_z);
@@ -138,11 +147,12 @@ public class SensorFragment extends Fragment {
 						holder.switch_sensor = (Switch) currentRow.findViewById(R.id.switch_sensor);
 						holder.seekbar_sensor = (SeekBar) currentRow.findViewById(R.id.seekbar_sensor);
 						holder.sensor = sensor;
-						
 						holder.sensorListener = new SensorEventListener() {
 							
 							@Override
 							public void onSensorChanged(SensorEvent sensorEvent) {
+								//This method is being invoked when sensor produces a new output.
+								
 								//If SHOW_DATA option is selected, update UI.
 								if (SHOW_DATA) {
 									holder.progressbar_x.setProgress((int) Math.abs(sensorEvent.values[0] * 10));
@@ -163,6 +173,8 @@ public class SensorFragment extends Fragment {
 							
 							@Override
 							public void onAccuracyChanged(Sensor sensor, int accuracy) {
+								//This method is being invoked whenever your sensor's accuracy changes.
+
 								//Show accuracy change if SHOW_DATA option is selected.
 								if (SHOW_DATA) {
 									switch (accuracy) {
@@ -184,10 +196,13 @@ public class SensorFragment extends Fragment {
 						//Set holder as the tag of the view for future access.
 						currentRow.setTag(holder);
 						
+						//Create a listener for our seekbar which we use to set sensor's rate.
 						holder.seekbar_sensor.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 							
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
+								//This method is being invoked whenever you stop touching the seekbar.
+
 								//If sensor was enabled, re-register sensor.
 								if (holder.switch_sensor.isChecked()) {
 									sensorRegister(holder.sensor, holder.sensorRate, holder.sensorListener);
@@ -196,6 +211,8 @@ public class SensorFragment extends Fragment {
 							
 							@Override
 							public void onStartTrackingTouch(SeekBar seekBar) {
+								//This method is being invoked whenever you start touching the seekbar.
+
 								//Unregister sensor while setting the rate.
 								mSensorManager.unregisterListener(holder.sensorListener);
 							}
@@ -203,18 +220,26 @@ public class SensorFragment extends Fragment {
 							@Override
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
+								//This method is being invoked whenever the progress of the seekBar changes.
+
 								//Show rate and store it. Will be used to register sensor accordingly.
+								//If the progress is 0, use the fastest delay rate.
+								//Formula is used to convert hertz into microseconds. (Android uses microseconds as it's rate unit.)
 								holder.sensorRate = progress != 0 ? (int) (1.0/progress * 1000000) : 
 									SensorManager.SENSOR_DELAY_FASTEST;
 								holder.textview_rate.setText("Rate: " + String.valueOf(progress != 0 ? progress : "FASTEST") + "hertz");
 							}
 						});
 						
+						//Set a listener for our switch which we use to start/stop sensorListener.
 						holder.switch_sensor.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 							//Toggle sensorListener, and if SHOW_DATA is selected, make UI visible.
 							@Override
 							public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+								//This method is being invoked whenever checked status of switch changes.(i.e. you touch it)
+
 								if (isChecked) {
+									//It's new status is checked, register sensor and if SHOW_DATA is true, make UI visible.
 									sensorRegister(holder.sensor, holder.sensorRate, holder.sensorListener);
 									if (SHOW_DATA) {
 										holder.progressbar_x.setVisibility(View.VISIBLE);
@@ -226,6 +251,7 @@ public class SensorFragment extends Fragment {
 										holder.textview_accuracy.setVisibility(View.VISIBLE);
 									}
 								} else {
+									//It's new status is unchecked, unregister listener and make UI invisible.
 									mSensorManager.unregisterListener(holder.sensorListener);
 									holder.progressbar_x.setVisibility(View.GONE);
 									holder.progressbar_y.setVisibility(View.GONE);
@@ -263,8 +289,10 @@ public class SensorFragment extends Fragment {
 	
 	@Override
 	public void onDestroy() {
+		//This method is being invoked when this view is being destroyed.
+
 		super.onDestroy();
-		//View is being destroyed, since listeners are parts of the view elements, unregister listeners to avoid creation of zombie listeners.
+		//Since listeners are parts of the view elements, unregister listeners to avoid creation of zombie listeners.
 		for (int i=0; i < mSensorContainer.getChildCount(); i++) {
 			Holder holder = (Holder) mSensorContainer.getChildAt(i).getTag();
 			mSensorManager.unregisterListener(holder.sensorListener);
@@ -277,7 +305,7 @@ public class SensorFragment extends Fragment {
 	 * Returns true for success, false for failure.
 	 */
     private boolean sensorRegister(Sensor sensor, int sensorRate, SensorEventListener sensorEventListener) {
-
+    	//Try to register listener, and based on the boolean value we receive from it, return true or false and show errors.
         if (mSensorManager.registerListener(sensorEventListener, sensor, sensorRate)) {
             return true;
         } else {

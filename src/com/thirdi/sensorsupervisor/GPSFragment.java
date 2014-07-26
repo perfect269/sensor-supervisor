@@ -50,17 +50,20 @@ public class GPSFragment extends Fragment implements LocationListener {
 	@Override
 	public void onStart() {
 		super.onStart();
+		//Initialize member variables.
 		mLatitudeView = (TextView) getView().findViewById(R.id.latitude);
 		mLongitudeView = (TextView) getView().findViewById(R.id.longitude);
 		mAccuracyView = (TextView) getView().findViewById(R.id.accuracy);
 		mLocationButton = (Button) getView().findViewById(R.id.locationButton);
 		mLocationManager = (LocationManager) getActivity().getBaseContext()
 				.getSystemService(Context.LOCATION_SERVICE);
-		
+		//Set a click listener to our location button.
 		mLocationButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				//This method is being invoked whenever you click the button.
+				
 				registerGPS();
 				
 			}
@@ -75,8 +78,10 @@ public class GPSFragment extends Fragment implements LocationListener {
 		if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			//Provider is present, continue registering. Use default criteria to select provider.
 			mProvider = mLocationManager.getBestProvider(new Criteria(), false);
+			//Get last known location from said provider.
 			location = mLocationManager.getLastKnownLocation(mProvider);
 			
+			//If we have a location data
 			if (location != null) {
 				Toast.makeText(getActivity().getBaseContext() ,
 						"Provider " + mProvider + " has been selected.", Toast.LENGTH_SHORT);
@@ -112,7 +117,9 @@ public class GPSFragment extends Fragment implements LocationListener {
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		//Location changed. Show it.
+		//This method is being invoked whenever your location changes.
+		
+		//Show new location.
 		double latitude, longitude, accuracy;
 		latitude = location.getLatitude();
 		longitude = location.getLongitude();
@@ -125,6 +132,8 @@ public class GPSFragment extends Fragment implements LocationListener {
 	
 	@Override
 	public void onProviderDisabled(String provider) {
+		//This method is being invoked whenever your provider becomes disabled.
+
 		Toast.makeText(getActivity().getBaseContext(), "Disabled provider: " + 
 				provider, Toast.LENGTH_SHORT);
 		
@@ -132,6 +141,8 @@ public class GPSFragment extends Fragment implements LocationListener {
 
 	@Override
 	public void onProviderEnabled(String provider) {
+		//This method is being invoked whenever your provider becomes enabled.
+
 		Toast.makeText(getActivity().getBaseContext(), "Enabled new provider: " + 
 				provider, Toast.LENGTH_SHORT);
 		
@@ -139,6 +150,6 @@ public class GPSFragment extends Fragment implements LocationListener {
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		
+		//This method is being invoked whenever the provider status changes.
 	}
 }
