@@ -33,8 +33,10 @@ public class MainActivity extends Activity
     private SensorFragment mSensorFragment;
     private GPSFragment mGPSFragment;
     private NetworkFragment mNetworkFragment;
-    private MediaFragment mMediaFragment;
+    private CameraFragment mCameraFragment;
+    private AudioFragment mAudioFragment;
     private FragmentTransaction mFragmentTransaction;
+    private DatabaseFragment mDatabaseFragment;
     private SettingsFragment mSettingsFragment;
     
     @Override
@@ -50,8 +52,10 @@ public class MainActivity extends Activity
         mSensorFragment = new SensorFragment();
         mGPSFragment = new GPSFragment();
         mNetworkFragment = new NetworkFragment();
-        mMediaFragment = new MediaFragment();
+        mCameraFragment = new CameraFragment();
+        mAudioFragment = new AudioFragment();
         mSettingsFragment = new SettingsFragment();
+        mDatabaseFragment = new DatabaseFragment();
         
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -71,6 +75,11 @@ public class MainActivity extends Activity
     public void onSectionAttached(int number) {
     	// An element from NavigationDrawer is selected, replace the old fragment with the new one.
         // Basically, start a fragment transaction, define it, then commit it.
+
+    	// Camera and Audio Fragment Changed
+
+    	// Camera and Audio added
+
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -93,10 +102,22 @@ public class MainActivity extends Activity
             case 4:
             	mTitle = getString(R.string.title_section4);
             	mFragmentTransaction = mFragmentManager.beginTransaction();
-            	mFragmentTransaction.replace(R.id.container, mMediaFragment);
+            	mFragmentTransaction.replace(R.id.container, mCameraFragment);
             	mFragmentTransaction.commit();
             	break;
             case 5:
+            	mTitle = getString(R.string.title_section5);
+            	mFragmentTransaction = mFragmentManager.beginTransaction();
+            	mFragmentTransaction.replace(R.id.container, mAudioFragment);
+            	mFragmentTransaction.commit();
+            	break;
+            case 6:
+            	mTitle = getString(R.string.title_section6);
+            	mFragmentTransaction = mFragmentManager.beginTransaction();
+            	mFragmentTransaction.replace(R.id.container, mDatabaseFragment);
+            	mFragmentTransaction.commit();
+            	break;
+            case 7:
             	mTitle = getString(R.string.action_settings);
             	mFragmentTransaction = mFragmentManager.beginTransaction();
             	mFragmentTransaction.replace(R.id.container, mSettingsFragment);
